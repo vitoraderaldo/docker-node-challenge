@@ -1,6 +1,8 @@
 version: '3'
 services:
   backend:
+    depends_on:
+      - database
     restart: always
     build:
       context: ./backend
@@ -10,7 +12,11 @@ services:
       - 3000:3000
     volumes:
       - './backend:/app'
-      - /app/node_modules
     tty: true
 
-
+  database:
+    restart: always
+    image: mysql:8.0.30
+    command: --default-authentication-plugin=mysql_native_password
+    env_file:
+      - environment_variables.env
