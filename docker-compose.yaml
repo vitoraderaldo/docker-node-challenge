@@ -3,7 +3,6 @@ services:
   backend:
     depends_on:
       - database
-    restart: always
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
@@ -13,6 +12,9 @@ services:
     volumes:
       - './backend:/app'
     tty: true
+    env_file:
+      - environment_variables.env
+    command: ash -c "dockerize -wait tcp://database:3306 -timeout 60s && npm run start:dev"
 
   database:
     restart: always
@@ -20,3 +22,15 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     env_file:
       - environment_variables.env
+    volumes:
+      - type: volume
+        source: db
+        target: /var/lib/mysql
+      - type: bind
+        source: ./mysql
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+
+volumes:
+  db:
