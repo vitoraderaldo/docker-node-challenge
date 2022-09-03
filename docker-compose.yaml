@@ -8,13 +8,13 @@ services:
       dockerfile: Dockerfile.dev
     image: vitor96k/node-challenge
     ports:
-      - 3000:3000
+      - "3000"
     volumes:
       - './backend:/app'
     tty: true
     env_file:
       - environment_variables.env
-    command: ash -c "dockerize -wait tcp://database:3306 -timeout 60s && npm run start:dev"
+    command: ash -c "dockerize -wait tcp://database:3306 -timeout 60s && npm run start"
 
   database:
     restart: always
@@ -30,7 +30,16 @@ services:
         source: ./mysql
         target: /docker-entrypoint-initdb.d
     ports:
-      - "3306:3306"
+      - "3306"
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    image: vitor96k/nginx-fully-cycle
+    ports:
+      - "8080:80"
+    command: sh -c "dockerize -wait tcp://backend:3000 -timeout 60s && /docker-entrypoint.sh nginx '-g daemon off;'"
 
 volumes:
   db:
