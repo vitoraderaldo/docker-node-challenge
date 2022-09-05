@@ -9,5 +9,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 
 WORKDIR /app
 COPY . .
+RUN npm install
 
 CMD ["npm", "run", "start:dev"]

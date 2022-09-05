@@ -9,8 +9,6 @@ services:
     image: vitor96k/node-challenge
     ports:
       - "3000"
-    volumes:
-      - './backend:/app'
     tty: true
     env_file:
       - environment_variables.env
